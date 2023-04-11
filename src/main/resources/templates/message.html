@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script th:inline="javascript"> //controller에서 message를 전송해주면 > 저기 var message에 담김
+
+  /*<![CDATA[*/
+
+  var message = [[${message}]];
+  alert(message);
+
+  location.replace([[${searchUrl}]]);
+
+  /*]]>*/
+
+
+
+</script>
+</body>
+</html>
