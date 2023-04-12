@@ -5,9 +5,7 @@ import com.study.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,11 +23,11 @@ public class BoardController {
 
     @PostMapping("/board/writePro") //form action의 url과 일치해야 함
     public String boardWritePro(Board board, Model model, MultipartFile file) throws Exception { //매개변수로 view의 name을 받을 경우 문제가 생길 수 있어 엔티티를 매개변수로 받아주는 것이 명확 !
-            boardService.write(board, file);
-            model.addAttribute("message", "글 작성이 완료되었습니다.");
-            model.addAttribute("searchUrl", "/board/list");
+        boardService.write(board, file);
+        model.addAttribute("message", "글 작성이 완료되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
 
-            return "message";
+        return "message";
     }
 
     @GetMapping("/board/list")
@@ -53,19 +51,28 @@ public class BoardController {
     }
 
     @GetMapping("/board/modify/{id}")
-    public String boardModify(Model model, @PathVariable("id") Integer id) {
+    public String boardModify(@PathVariable("id") Integer id,
+                              Model model) {
+
         model.addAttribute("board", boardService.boardView(id));
+
         return "boardmodify";
     }
 
     @PostMapping("/board/update/{id}")
-    public String boardUpdate(@PathVariable("id") Integer id, Board board, Model model, MultipartFile file) throws Exception {
-        Board boardTmp = boardService.boardView(id);
-        boardTmp.setTitle(board.getTitle());
-        boardTmp.setContent(board.getContent());
+    public String boardUpdate(@PathVariable("id") Integer id, Board board, Model model, MultipartFile file) throws Exception{
 
-        boardService.write(boardTmp, file);
-        return "redirect:/board/list";
+        Board boardTemp = boardService.boardView(id);
+        boardTemp.setTitle(board.getTitle());
+        boardTemp.setContent(board.getContent());
+
+        boardService.write(boardTemp, file);
+
+        model.addAttribute("message", "글 수정이 완료되었습니다.");
+        model.addAttribute("searchUrl", "/board/list");
+
+        return "message";
+
     }
 }
 
