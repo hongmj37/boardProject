@@ -35,9 +35,17 @@ public class BoardController {
     }
 
     @GetMapping("/board/list")
-    public String boardList(Model model, @PageableDefault(page=0, size=10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) { //page는 디폴드 값, size는 한페이지당 개수, sort는 정렬기준컬럼, direction은 정렬순서
+    public String boardList(Model model, @PageableDefault(page=0, size=10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, //page는 디폴드 값, size는 한페이지당 개수, sort는 정렬기준컬럼, direction은 정렬순서
+                            String searchKeyword) {
 
-        Page<Board> list = boardService.boardList(pageable);
+        Page<Board> list = null;
+
+        if(searchKeyword == null) {
+            list = boardService.boardList(pageable);
+        } else {
+            list = boardService.boardSearch(searchKeyword, pageable);
+        }
+
 
         int nowPage = list.getPageable().getPageNumber() + 1; //현재 페이지 가져옴 (pageable.getPageNumber() 도 가져옴) -> 첫 값이 0이라 +1 필요
         int startPage = Math.max(nowPage - 4, 1); //Math.max는 앞 뒤 값 비교해서 더 큰값으로 출력 ! -> 해주는 이유는 현재 페이지가 1인 경우 마이너스가 나오면 1이 되도록 !
