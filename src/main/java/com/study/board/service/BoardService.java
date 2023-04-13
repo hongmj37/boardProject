@@ -49,3 +49,4 @@ public class BoardService {
         boardRepository.deleteById(id);
     }
 }
+

@@ -3,6 +3,7 @@ package com.study.board.controller;
 import com.study.board.entity.Board;
 import com.study.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -36,7 +37,16 @@ public class BoardController {
     @GetMapping("/board/list")
     public String boardList(Model model, @PageableDefault(page=0, size=10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) { //page는 디폴드 값, size는 한페이지당 개수, sort는 정렬기준컬럼, direction은 정렬순서
 
-        model.addAttribute("list", boardService.boardList(pageable));
+        Page<Board> list = boardService.boardList(pageable);
+
+        int nowPage = list.getPageable().getPageNumber() + 1; //현재 페이지 가져옴 (pageable.getPageNumber() 도 가져옴) -> 첫 값이 0이라 +1 필요
+        int startPage = Math.max(nowPage - 4, 1); //Math.max는 앞 뒤 값 비교해서 더 큰값으로 출력 ! -> 해주는 이유는 현재 페이지가 1인 경우 마이너스가 나오면 1이 되도록 !
+        int endPage = Math.min(nowPage + 5, list.getTotalPages()); // -> nowPage에 +5를 했을 때, 기존의 페이지보다 커질 경우를 대비하여 넘어가면 해당 리스트의 페이지 수가 끝 페이지가 되도록 !
+
+        model.addAttribute("list", list);
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
 
         return "boardlist";
     }
